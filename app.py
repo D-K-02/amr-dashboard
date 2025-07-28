@@ -15,6 +15,7 @@ with open("style.css") as f:
 def load_data():
     url = "https://drive.google.com/uc?export=download&id=1UTx-ca3iv3KPWgkc6LBqSlX8Q-CAvvRW"
     df = pd.read_csv(url)
+    df.columns = df.columns.str.strip()  # Removes extra spaces
     df.fillna("", inplace=True)
     df["Year"] = df["Pub_Date"].astype(str).str[:4]
     return df
