@@ -13,14 +13,17 @@ with open("style.css") as f:
 # Load data
 @st.cache_data
 def load_data():
-    csv_url = "https://drive.google.com/uc?export=download&id=1UTx-ca3iv3KPWgkc6LBqSlX8Q-CAvvRW"
-    df = pd.read_csv(csv_url)
-    df.columns = df.columns.str.strip()  # Removes extra spaces
-    df.fillna("", inplace=True)
-    df["Year"] = df["PubDate"].astype(str).str[:4]
+    url = "https://drive.google.com/uc?export=download&id=1UTx-ca3iv3KPWgkc6LBqSlX8Q-CAvvRW"
+    df = pd.read_csv(url)
+    df.columns = df.columns.str.strip()  # Important
+    st.write("Loaded columns:", df.columns.tolist())  # For debugging
     return df
 
 df = load_data()
+
+# Now this line should work:
+df["Year"] = df["PubDate"].astype(str).str[:4]
+
 # Custom fixed header + navbar
 tab = st.query_params.get("tab", "home") # ← Already present
 
