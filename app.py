@@ -16,6 +16,8 @@ def load_data():
     url = "https://drive.google.com/uc?export=download&id=1UTx-ca3iv3KPWgkc6LBqSlX8Q-CAvvRW"
     df = pd.read_csv(url)
     df.columns = df.columns.str.strip()  # Removes extra spaces
+    # DEBUG: Print column names to verify
+    st.write("🔍 Columns in DataFrame:", df.columns.tolist())
     df.fillna("", inplace=True)
     df["Year"] = df["PubDate"].astype(str).str[:4]
     return df
