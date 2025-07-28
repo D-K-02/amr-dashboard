@@ -16,7 +16,7 @@ def load_data():
     url = "https://drive.google.com/uc?export=download&id=1UTx-ca3iv3KPWgkc6LBqSlX8Q-CAvvRW"
     df = pd.read_csv(url)
     df.fillna("", inplace=True)
-    df["Year"] = df["PubDate"].astype(str).str[:4]
+    df["Year"] = df["Pub_Date"].astype(str).str[:4]
     return df
 
 df = load_data()
