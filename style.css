@@ -1,0 +1,112 @@
+/* ===== Custom Fixed Header ===== */
+.custom-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #00897b;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Tool name */
+.tool-name {
+    color: white !important;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 0 10px;
+    margin: 0;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #26a69a;
+    display: flex;
+    justify-content: center;
+    padding: 12px 0;
+    gap: 40px;
+}
+
+/* Navbar links */
+.nav-item {
+    color: white !important;           /* add !important */
+    font-weight: bold;
+    text-decoration: none !important;  /* add !important */
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 16px;
+    border: none;
+}
+
+.nav-item:hover {
+    background-color: #004d4d;
+    color: #ffffff;
+}
+/* Highlight the active tab */
+.nav-item.active {
+    background-color: #004d4d;
+    color: #ffffff;
+}
+/* Bottom accent bar below navbar */
+.bottom-accent {
+    height: 5px;
+    background-color: #00897b;
+    
+}
+/* Center and format home content */
+.home-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: justify;
+    font-size: 16px;
+    line-height: 1.6;
+    padding-bottom: 20px;
+}
+
+.home-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.home-container h3 {
+    text-align: center;
+    margin-top: 40px;
+}
+
+ul {
+    margin-left: 20px;
+}
+.main-content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: justify;
+    font-size: 16px;
+    line-height: 1.6;
+    padding-bottom: 20px;
+}
+
+.main-content-wrapper h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.main-content-wrapper ul {
+    margin-left: 20px;
+}
+
+/* Fixed footer */
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #004d4d;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+}
+
