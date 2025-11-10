@@ -11,7 +11,7 @@ with open("style.css") as f:
 @st.cache_data
 def load_data():
     csv_url = "https://figshare.com/ndownloader/files/59436200" 
-    df = pd.read_csv(csv_url)
+    df = pd.read_csv(csv_url, low_memory=False, dtype=str)
     df.columns = df.columns.str.strip()  # Removes extra spaces
     df.fillna("", inplace=True)
     df["Year"] = df["PubDate"].astype(str).str[:4]
@@ -152,4 +152,5 @@ with tab4:
     )
 st.markdown("</div>", unsafe_allow_html=True)
 st.markdown('<div class="fixed-footer">© 2025 AMR Dashboard</div>', unsafe_allow_html=True)
+
 
