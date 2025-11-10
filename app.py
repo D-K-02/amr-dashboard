@@ -152,3 +152,4 @@ with tab4:
     )
 st.markdown("</div>", unsafe_allow_html=True)
 st.markdown('<div class="fixed-footer">© 2025 AMR Dashboard</div>', unsafe_allow_html=True)
+
