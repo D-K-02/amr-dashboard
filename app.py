@@ -10,7 +10,8 @@ with open("style.css") as f:
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv("7_FINAL_NEW_RESULT_KEY_1.csv")
+    csv_url = "https://figshare.com/ndownloader/files/56608076" 
+    df = pd.read_csv(csv_url)
     df.columns = df.columns.str.strip()
     df.fillna("", inplace=True)
     df["Year"] = df["PubDate"].astype(str).str[:4]
@@ -151,3 +152,4 @@ with tab4:
     )
 st.markdown("</div>", unsafe_allow_html=True)
 st.markdown('<div class="fixed-footer">© 2025 AMR Dashboard</div>', unsafe_allow_html=True)
+
