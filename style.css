@@ -4,25 +4,26 @@
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #00897b;
+    background-color: #495ea6;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     font-family: 'Segoe UI', sans-serif;
+    padding: 18px 0;
 }
 
 /* Tool name */
 .tool-name {
-    color: white !important;
-    font-size: 32px;
+    color: #FFFFFF !important;
+    font-size: 36px;
     font-weight: bold;
     text-align: center;
-    padding: 20px 0 10px;
     margin: 0;
+    padding: 2.75rem 0px 0rem !important;
 }
 
 /* Navbar */
 .navbar {
-    background-color: #26a69a;
+    background-color: #1E88A8;
     display: flex;
     justify-content: center;
     padding: 12px 0;
@@ -47,7 +48,7 @@
 }
 /* Highlight the active tab */
 .nav-item.active {
-    background-color: #004d4d;
+    background-color: #1b8888;
     color: #ffffff;
 }
 /* Bottom accent bar below navbar */
@@ -58,7 +59,7 @@
 }
 /* Center and format home content */
 .home-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     text-align: justify;
     font-size: 16px;
@@ -80,7 +81,7 @@ ul {
     margin-left: 20px;
 }
 .main-content-wrapper {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     text-align: justify;
     font-size: 16px;
@@ -90,11 +91,41 @@ ul {
 
 .main-content-wrapper h2 {
     text-align: center;
+    margin-top: 10px !important;   /* reduce space above */
     margin-bottom: 20px;
 }
 
 .main-content-wrapper ul {
     margin-left: 20px;
+}
+/* Custom headings for Statistics section */
+.custom-heading {
+    font-size: 29px !important;   /* increase size */
+    font-weight: 580 !important;  /* bold */
+    color: #285dab !important;    /* deep blue */
+    text-align: center !important; /* center align */
+    margin: 30px 0 15px 0 !important; /* spacing */
+}
+
+/* Center and enlarge Streamlit tabs */
+.stTabs [data-baseweb="tab-list"] {
+    justify-content: center;   /* center horizontally */
+    gap: 60px;                 /* spacing between tabs */
+    padding-top: 0.25rem;
+}
+
+.stTabs [data-baseweb="tab"] {
+    font-weight: bold !important;
+    color: #217fae;
+}
+button [data-testid="stMarkdownContainer"] p {
+    font-size: 22px !important;
+    font-weight: 450 !important;
+    color: #1a237e !important;
+}
+.stTabs [data-baseweb="tab"]:hover {
+    background-color: #ffffff; /* hover effect */
+    border-radius: 6px;
 }
 
 /* Fixed footer */
@@ -103,10 +134,9 @@ ul {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #004d4d;
+    background-color: #2C3E78;
     color: white;
     text-align: center;
     padding: 8px;
-    font-size: 12px;
+    font-size: 14px;
 }
-
