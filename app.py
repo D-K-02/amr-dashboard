@@ -3,66 +3,50 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-# Page config
 st.set_page_config(page_title="AMR Dashboard", layout="wide")
 
-# Load external CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Load data
 @st.cache_data
 def load_data():
-    csv_url = "https://figshare.com/ndownloader/files/56608076" 
-    df = pd.read_csv(csv_url)
-    df.columns = df.columns.str.strip()  # Removes extra spaces
+    df = pd.read_csv("7_FINAL_NEW_RESULT_KEY_1.csv")
+    df.columns = df.columns.str.strip()
     df.fillna("", inplace=True)
     df["Year"] = df["PubDate"].astype(str).str[:4]
     return df
 
 df = load_data()
-# Custom fixed header + navbar
-tab = st.query_params.get("tab", "home") # ← Already present
 
-st.markdown(f"""
+# Store entire data and filtered data in session_state
+if "filtered_df" not in st.session_state:
+    st.session_state.filtered_df = df
+
+# Custom header (only tool name here)
+st.markdown("""
 <div class="custom-header">
-    <h1 class="tool-name">AMR-Viz</h1>
-    <div class="navbar">
-        <a href="/?tab=home" class="nav-item {'active' if tab == 'home' else ''}">Home</a>
-        <a href="/?tab=stats" class="nav-item {'active' if tab == 'stats' else ''}">Statistics</a>
-        <a href="/?tab=about" class="nav-item {'active' if tab == 'about' else ''}">About</a>
-        <a href="/?tab=contact" class="nav-item {'active' if tab == 'contact' else ''}">Contact</a>
-    </div>
-    <div class="bottom-accent"></div>
+    <h1 class="tool-name">AMR Curator</h1>
 </div>
 """, unsafe_allow_html=True)
-st.markdown("""
-<style>
-.main-content-wrapper {
-    margin-top: 60px;       /* Pushes content below the fixed header */
-    padding: 0 40px;         /* Adds spacing from left and right sides */
-}
-</style>
-<div class="main-content-wrapper">
-""", unsafe_allow_html=True)
 
-# --------- Page: HOME ----------
-if tab == "home":
+# Navigation stays as Streamlit tabs
+tab1, tab2, tab3, tab4 = st.tabs(["Home", "Statistics", "About", "Contact"])
+
+with tab1:
     st.markdown("""
     <div class="home-container">
         <h2> Antimicrobial Resistance (AMR)</h2>
         <p>
-        Antimicrobial resistance (AMR) is a global health crisis where microorganisms (like bacteria, fungi, and viruses)
-        become resistant to treatment by antimicrobial agents. It results in prolonged illness, higher healthcare costs, and increased mortality.
+        Antimicrobial resistance (AMR)  is a growing global health crisis where microorganisms — such as bacteria, fungi, and viruses — evolve to resist treatment by antimicrobial agents. This leads to prolonged illness, higher healthcare costs, and increased mortality.
         </p>
         <p>
-        This dashboard allows interactive exploration of scientific articles related to AMR, using techniques such as:
+            Our dashboard leverages <strong>Natural Language Processing (NLP)</strong> to automatically analyze and enrich scientific literature on AMR.
+        This enriched dataset allows researchers to quickly identify key topics, trends, and entities by interactive exploration of scientific articles related to AMR, using techniques such as:
         </p>
         <ul>
             <li>Named Entity Recognition (NER)</li>
             <li>TF-IDF Keyword Extraction</li>
             <li>MeSH Term Word Clouds</li>
-            <li>Search by Year or Pathogen</li>
         </ul>
         <h3> Smart Article Search</h3>
     </div>
@@ -72,7 +56,7 @@ if tab == "home":
     with col1:
         year = st.selectbox("Select Year", ["Any"] + sorted(df["Year"].unique()))
     with col2:
-        pathogen = st.text_input("Search by Pathogen", placeholder="e.g., Escherichia coli")
+        pathogen = st.text_input("Select Pathogen", placeholder="e.g., E. coli")
 
     st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.button("Search"):
@@ -81,43 +65,52 @@ if tab == "home":
             filtered = filtered[filtered["Year"] == year]
         if pathogen:
             filtered = filtered[filtered["Abstract"].str.contains(pathogen, case=False, na=False)]
-
-        st.success(f" Found {len(filtered)} matching articles")
+        st.session_state.filtered_df = filtered  # <--- Save the filtered results to session state!
+        st.success(f"Found {len(filtered)} matching articles")
+        st.dataframe(filtered[["Title", "Journal", "PubDate", "Abstract"]].reset_index(drop=True), height=400)
+    else:
+        # Show the most recent search results (if any)
+        filtered = st.session_state.filtered_df
         st.dataframe(filtered[["Title", "Journal", "PubDate", "Abstract"]].reset_index(drop=True), height=400)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --------- Page: STATISTICS ----------
-elif tab == "stats":
-    st.markdown("###  TF-IDF Keyword Frequency")
-    if "TopKeyword" in df.columns:
-        top_keywords = df["TopKeyword"].value_counts().head(15)
+with tab2:
+    st.markdown('<h3 class="custom-heading"> TF-IDF Keyword Frequency</h3>', unsafe_allow_html=True)
+    filtered = st.session_state.filtered_df  # <-- Use filtered results!
+    if "TopKeyword" in filtered.columns:
+        top_keywords = filtered["TopKeyword"].value_counts().head(15)
         fig, ax = plt.subplots()
-        top_keywords.plot(kind="barh", ax=ax, color="#00bfa6")
+        top_keywords.plot(kind="barh", ax=ax, color="#A4B6BB")
         ax.invert_yaxis()
         ax.set_xlabel("Frequency")
         ax.set_ylabel("Keyword")
         st.pyplot(fig)
     else:
-        st.info("No TF-IDF keywords available.")
+        st.info("No TF-IDF keywords available for the current search results.")
 
-    st.markdown("###  MeSH Term Word Cloud")
-    mesh_text = " ".join(df["MeSH_Terms"].dropna().astype(str))
-    wordcloud = WordCloud(width=1000, height=400, background_color="white").generate(mesh_text)
-    fig_wc, ax_wc = plt.subplots()
-    ax_wc.imshow(wordcloud, interpolation="bilinear")
-    ax_wc.axis("off")
-    st.pyplot(fig_wc)
+    st.markdown('<h3 class="custom-heading"> MeSH Term Word Cloud</h3>', unsafe_allow_html=True)
+    mesh_text = " ".join(filtered["MeSH_Terms"].dropna().astype(str))
+    if mesh_text.strip():
+        wordcloud = WordCloud(width=900, height=400, background_color="white").generate(mesh_text)
+        fig_wc, ax_wc = plt.subplots()
+        ax_wc.imshow(wordcloud, interpolation="bilinear")
+        ax_wc.axis("off")
+        st.pyplot(fig_wc)
+    else:
+        st.info("No MeSH Terms available for the current search results.")
 
-# --------- Page: ABOUT ----------
-elif tab == "about":
+with tab3:
     st.markdown("""
     <div class="main-content-wrapper">
         <h2> About This Tool</h2>
         <p>
-        <strong>AMR Dashboard</strong> is a literature mining and visualization tool designed to analyze PubMed articles related to antimicrobial resistance.
+        <strong>AMR Curator</strong> is a  literature mining and visualization platform, built to accelerate discovery in antimicrobial resistance (AMR) research. By utilising <strong>Python</strong> for data processing, it provides an interactive interface and transforms raw scientific publications into actionable intelligence.
         </p>
         <p>
-        It supports exploration of trends, keywords, and semantic features from research articles using:
+        Our platform integrates <strong>Natural Language Processing (NLP)</strong> pipelines that automatically extract and enrich data from PubMed articles. By combining Named Entity Recognition (NER), TF-IDF keyword extraction, and MeSH term mapping, each record is transformed into a structured, high-value entry in a <strong>curated AMR knowledgebase</strong>.
+        </p>
+        <p>
+        At the core of this tool is a <strong>curated, enriched dataset</strong> of PubMed articles related to AMR, from last 10 years. It supports exploration of trends, keywords, and semantic features from research articles using:
         </p>
         <ul>
             <li>Interactive article search by year or pathogen</li>
@@ -126,27 +119,35 @@ elif tab == "about":
             <li>MeSH term cloud and statistical visualization</li>
         </ul>
         <p>
-        Built using <strong>Python</strong>, <strong>Streamlit</strong>, <strong>Pandas</strong>, <strong>NLTK</strong>, and <strong>WordCloud</strong>.
-        </p>
-        <p>
-        <strong>Author:</strong> [Your Name or Organization] <br>
-        <strong>Contact:</strong> [Optional Email or GitHub] <br>
-        <strong>Dataset:</strong> Extracted from PubMed using Entrez API
+        By combining NLP with a clean, accessible interface, the AMR Dashboard empowers researchers, policymakers, and healthcare professionals to uncover patterns, track emerging threats, and focus on the most impactful areas of AMR research.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-
-# --------- Page: CONTACT ----------
-elif tab == "contact":
-    st.markdown("###  Contact Us")
-    st.markdown("Fill out the form below to reach us with your queries or feedback:")
-    st.components.v1.iframe(
-        src="https://docs.google.com/forms/d/e/1FAIpQLScPHH2Xat1e5_Z80yocEuHGVv4YHhioUdsK7EiPoZSmjXr7ew/viewform?embedded=true",
-        height=1700,
-        width=800
+with tab4:
+    st.markdown(
+        """
+        <div style="text-align: center; max-width: 900px; margin: auto;">
+            <h3>Contact Us</h3>
+            <p>Fill out the form below to reach us with your queries or feedback:</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        """
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScPHH2Xat1e5_Z80yocEuHGVv4YHhioUdsK7EiPoZSmjXr7ew/viewform?embedded=true"
+                    width="800"
+                    height="1700"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0">
+                Loading…
+            </iframe>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 st.markdown("</div>", unsafe_allow_html=True)
-
-# Footer
 st.markdown('<div class="fixed-footer">© 2025 AMR Dashboard</div>', unsafe_allow_html=True)
